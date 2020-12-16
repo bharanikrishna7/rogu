@@ -1,14 +1,13 @@
 # ROGU
 
-[![CircleCI](https://circleci.com/gh/bharanikrishna7/rogu/tree/main.svg?style=shield)](https://circleci.com/gh/bharanikrishna7/rogu/tree/main)
-
-[![codecov](https://codecov.io/gh/bharanikrishna7/rogu/branch/main/graph/badge.svg)](https://codecov.io/gh/bharanikrishna7/rogu)
-
-Modern database query and access library for Scala/Java
-
 <img align="right" src="logos/rogu.jpg" height="150px" width="150px"/>
 
-The aim of Rogu is to abstract | automate all teh steps after generating connection till retrieving execution results. 
+[![CircleCI](https://circleci.com/gh/bharanikrishna7/rogu/tree/main.svg?style=shield)](https://circleci.com/gh/bharanikrishna7/rogu/tree/main)
+[![codecov](https://codecov.io/gh/bharanikrishna7/rogu/branch/main/graph/badge.svg)](https://codecov.io/gh/bharanikrishna7/rogu)
+
+Modern database query and access library for Scala/Java.
+
+The aim of `Rogu` is to abstract | automate all teh steps after generating connection till retrieving execution results. 
 
 This includes:
 * Prepare Statement
