@@ -7,7 +7,7 @@ jobs:
   build:
     docker:
       # specify the version you desire here
-      - image: mozilla/sbt:8u232_1.3.13
+      - image: bharanikrishna7/sbt_mysql_employees:0.1
 
       # Specify service dependencies here if necessary
       # CircleCI maintains a library of pre-built images
