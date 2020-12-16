@@ -1,4 +1,4 @@
-<img align="right" src="logos/rogu.jpg" height="170px" width="170px" style="padding-left: 20px"/>
+<img align="right" src="logos/rogu.jpg" height="150px" width="150px" style="padding-left: 20px"/>
 
 [![CircleCI](https://circleci.com/gh/bharanikrishna7/rogu/tree/main.svg?style=shield)](https://circleci.com/gh/bharanikrishna7/rogu/tree/main)
 [![codecov](https://codecov.io/gh/bharanikrishna7/rogu/branch/main/graph/badge.svg)](https://codecov.io/gh/bharanikrishna7/rogu)
@@ -6,7 +6,9 @@
 # ROGU
 Modern database query and access library for Scala/Java
 
-The aim of Rogu is to abstract | automate all teh steps after generating connection till retrieving execution results. This includes:
+The aim of Rogu is to abstract | automate all teh steps after generating connection till retrieving execution results. 
+
+This includes:
 * Prepare Statement
 * Execute Query | Operation
 * Retrieve Resultsets
@@ -16,6 +18,7 @@ The most appropriate use case for this library | framework would be to quickly q
 
 ## OFFICIALLY SUPPORTED DATABASES
 Any jdbc-connector which generates java.sql.Connection type of object should be natively supported since we are not using any libraries (or) high level objects (or) APIs.
+
 Currently we support:
 * All Databases which support jdbc connections
 * Connection Pool support (which use jdbc connections. ex: HikariCP and BoneCP)
