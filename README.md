@@ -1,4 +1,5 @@
 <img align="right" src="logos/rogu.jpg" height="170px" width="170px" style="padding-left: 20px"/>
+
 # ROGU
 Modern database query and access library for Scala/Java
 

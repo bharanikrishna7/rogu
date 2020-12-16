@@ -1,0 +1,51 @@
+# Scala CircleCI 2.0 configuration file
+#
+# Check https://circleci.com/docs/2.0/sample-config/ for more details
+#
+version: 2
+jobs:
+  build:
+    docker:
+      # specify the version you desire here
+      - image: mozilla/sbt:8u232_1.3.13
+
+      # Specify service dependencies here if necessary
+      # CircleCI maintains a library of pre-built images
+      # documented at https://circleci.com/docs/2.0/circleci-images/
+      # - image: circleci/postgres:9.4
+
+    working_directory: ~/rogu
+
+    environment:
+      # Customize the JVM maximum heap limit
+      SBT_VERSION: 1.4.
+      JVM_OPTS: -Xms256m -Xmx1024m
+      CODECOV_TOKEN: "ed1ee818-dfcc-46d2-9c86-a1a58b8c7a57"
+
+    steps:
+      - run: echo 'export ARTIFACT_BUILD=$CIRCLE_PROJECT_REPONAME-$CIRCLE_BUILD_NUM.zip ' >> $BASH_ENV
+      - checkout
+      - run:
+          name: Compile & Test Rogu
+          command: cat /dev/null | sbt clean compile coverage test coverageReport
+      - run:
+          name: Push Coverage Report to Codecov Dashboard
+          command: bash <(curl -s https://codecov.io/bash)
+      - store_test_results:
+          path: target/test-reports
+      # Download and cache dependencies
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "build.sbt" }}
+            # fallback to using the latest cache if no exact match is found
+            - v1-dependencies-
+
+      - run: cat /dev/null | sbt test:compile
+
+      - save_cache:
+          paths:
+            - ~/.m2
+          key: v1-dependencies--{{ checksum "build.sbt" }}
+
+      # run tests!
+      - run: cat /dev/null | sbt test:test
