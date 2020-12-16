@@ -26,6 +26,9 @@ jobs:
       - run: echo 'export ARTIFACT_BUILD=$CIRCLE_PROJECT_REPONAME-$CIRCLE_BUILD_NUM.zip ' >> $BASH_ENV
       - checkout
       - run:
+          name: Start MySql Database
+          command: /etc/init.d/mysqld start 
+      - run:
           name: Compile & Test Rogu
           command: cat /dev/null | sbt clean compile coverage test coverageReport
       - run:
