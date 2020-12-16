@@ -1,5 +1,8 @@
 <img align="right" src="logos/rogu.jpg" height="170px" width="170px" style="padding-left: 20px"/>
 
+[![CircleCI](https://circleci.com/gh/bharanikrishna7/rogu/tree/main.svg?style=shield)](https://circleci.com/gh/bharanikrishna7/rogu/tree/main)
+[![codecov](https://codecov.io/gh/bharanikrishna7/rogu/branch/main/graph/badge.svg)](https://codecov.io/gh/bharanikrishna7/rogu)
+
 # ROGU
 Modern database query and access library for Scala/Java
 
