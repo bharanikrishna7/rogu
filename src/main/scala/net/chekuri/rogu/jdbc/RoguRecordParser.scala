@@ -114,18 +114,18 @@ trait RoguRecordParser extends RoguParser with RoguLogger {
       }
     } else if (is_string) {
       value
-    } else if (is_date) {
-      val pattern: String = "yyyy-MM-dd hh:mm:ss.SSS"
-      logger.trace(s"Trimmed Pattern: ${pattern.substring(0, value.length)}")
-      val df = new SimpleDateFormat(pattern.substring(0, value.length))
-      val date = df.parse(value)
-      new Date(date.getTime)
     } else if (is_time) {
       val pattern: String = "yyyy-MM-dd hh:mm:ss.SSS"
       logger.trace(s"Trimmed Pattern: ${pattern.substring(0, value.length)}")
       val df = new SimpleDateFormat(pattern.substring(0, value.length))
       val date = df.parse(value)
       new Timestamp(date.getTime)
+    } else if (is_date) {
+      val pattern: String = "yyyy-MM-dd hh:mm:ss.SSS"
+      logger.trace(s"Trimmed Pattern: ${pattern.substring(0, value.length)}")
+      val df = new SimpleDateFormat(pattern.substring(0, value.length))
+      val date = df.parse(value)
+      new Date(date.getTime)
     } else {
       throw new IllegalArgumentException(
         s"Trying to parse unsupported data type. Supplied field's data type: $column_type")

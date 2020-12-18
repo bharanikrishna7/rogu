@@ -21,6 +21,10 @@ class RoguLoggerSpec extends AnyFlatSpec with RoguLogger {
         |""".stripMargin
 
     multiLineInfoLog(message)
+    multiLineDebugLog(message)
+    multiLineTraceLog(message)
+    multiLineWarnLog(message)
+    multiLineErrorLog(message)
     assert(true)
   }
 }

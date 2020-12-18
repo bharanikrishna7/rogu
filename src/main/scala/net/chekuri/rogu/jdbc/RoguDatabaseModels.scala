@@ -35,7 +35,10 @@ object RoguDatabaseModels {
     fetch_nanos: BigInt,
     process_nanos: BigInt,
     var total_nanos: BigInt = BigInt.apply(0))
-    extends RoguLogger {
+    extends RoguLogger with RoguThreads {
+    total_nanos = compile_nanos.+(fetch_nanos.+(process_nanos))
+    logger.trace(s"initialized new rogu parsed database result record using thread with id: ${getThreadId()}")
+
     def updateTotalNanos(new_total_nanos: BigInt): Unit = {
       if (new_total_nanos.compareTo(total_nanos) > 0) {
         total_nanos = new_total_nanos
@@ -45,5 +48,4 @@ object RoguDatabaseModels {
       }
     }
   }
-
 }
