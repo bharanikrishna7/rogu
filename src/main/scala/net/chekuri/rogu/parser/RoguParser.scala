@@ -1,7 +1,10 @@
 package net.chekuri.rogu.parser
 
 import net.chekuri.rogu.utilities.{RoguLogger, RoguThreads}
-import org.json4s.DefaultFormats
+import org.json4s.JsonAST.{JInt, JString}
+import org.json4s.{CustomSerializer, DefaultFormats, Formats, JBool, JNull}
+
+import java.sql.{Date, Timestamp}
 
 /** Interface which provides methods
   * to serialize and deserialize between
@@ -10,7 +13,7 @@ import org.json4s.DefaultFormats
 trait RoguParser extends RoguThreads with RoguLogger {
 
   /* using implicit formats when available */
-  implicit val formats: DefaultFormats.type = DefaultFormats
+  implicit val formats: Formats = DefaultFormats + DateSerializer + TimestampSerializer + new NumberToBooleanSerializer
 
   /** Method to parse a json string to Case Class / Class.
     *
@@ -64,4 +67,52 @@ trait RoguParser extends RoguThreads with RoguLogger {
       write(payload)
     }
   }
+
+  /** Date Serializer to serialize Java Sql Date objects.
+    */
+  case object DateSerializer
+    extends CustomSerializer[java.sql.Date](format =>
+      (
+        {
+          case JString(s) => Date.valueOf(s)
+          case JNull => null
+        },
+        { case d: Date =>
+          JString(d.toString())
+        }
+      ))
+
+  /** Timestamp serializer to serialize Java SQL Timestamp
+    * object.
+    */
+  case object TimestampSerializer
+    extends CustomSerializer[java.sql.Timestamp](format =>
+      (
+        {
+          case JString(s) => Timestamp.valueOf(s)
+          case JNull => null
+        },
+        { case d: Timestamp =>
+          JString(d.toString())
+        }
+      ))
+
+  /** Serializer to correctly convert number (0, 1) to boolean when required.
+    */
+  class NumberToBooleanSerializer
+    extends CustomSerializer[Boolean](format =>
+      (
+        { case JInt(s) =>
+          if (s.equals(BigInt.apply(0)))
+            false
+          else if (s.equals(BigInt.apply(1)))
+            true
+          else
+            throw new IllegalArgumentException(s"Expecting either 1 or 0. But found $s")
+        },
+        { case x: Boolean =>
+          JBool(x)
+        }
+      ))
+
 }

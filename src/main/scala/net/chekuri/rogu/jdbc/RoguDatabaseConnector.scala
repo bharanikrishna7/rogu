@@ -6,7 +6,6 @@ import net.chekuri.rogu.jdbc.RoguDatabaseModels.{
   RoguDatabaseResult,
   RoguParsedDatabaseResult
 }
-import net.chekuri.rogu.parser.RoguParser
 import net.chekuri.rogu.utilities.{RoguBenchmark, RoguLogger, RoguThreads}
 
 import java.sql.{Connection, ResultSet, ResultSetMetaData}
@@ -19,7 +18,7 @@ import java.sql.{Connection, ResultSet, ResultSetMetaData}
   * @param id         id to help identify instance when using along with thread pools.
   */
 class RoguDatabaseConnector(connection: Connection, driver: String, id: Long)
-  extends RoguParser with RoguThreads with RoguLogger with RoguBenchmark {
+  extends RoguRecordParser with RoguThreads with RoguLogger with RoguBenchmark {
   logger.trace(s"New Rogu Database Connector has been initialized on thread with ID: ${getThreadId()}")
 
   /** Method to return current rogu database connector
@@ -139,48 +138,6 @@ class RoguDatabaseConnector(connection: Connection, driver: String, id: Long)
     val fin = result.result
     fin.updateTotalNanos(total_nanos)
     fin
-  }
-
-  /** Protected method to parse and extract records as list of
-    * objects using the class manifest information.
-    *
-    * @param resultset resultset returned by executeQuery statement.
-    * @param columns   expected list of columns associated with resultset.
-    * @param m         Manifest associated with the class we want to parse to.
-    * @tparam T Case Class / Class we want to parse.
-    * @return List of records parsed into object (type info will be fetched using manifest).
-    */
-  protected def parseAndExtractRecords[T](resultset: ResultSet, columns: List[RoguDatabaseColumn])(implicit
-    m: Manifest[T]): List[T] = {
-    if (columns.isEmpty) {
-      List[T]()
-    } else {
-      val col_count = columns.size
-      var processed_results: List[T] = List[T]()
-      var record_index: BigInt = BigInt.apply(0)
-      while (resultset.next()) {
-        record_index = record_index.+(1)
-        var record_values: Map[String, Any] = Map[String, Any]()
-        for (column_index <- 1 to col_count) {
-          val column = columns(column_index - 1)
-          val record_value = resultset.getString(column.name)
-          var isDigit: Boolean = true
-          record_value.foreach(x => {
-            if (!Character.isDigit(x)) {
-              isDigit = false
-            }
-          })
-          if (isDigit) {
-            record_values += (column.name -> BigInt.apply(record_value))
-          } else {
-            record_values += (column.name -> record_value)
-          }
-        }
-        val deserializeIntoObject: T = ParseMap[T](record_values)
-        processed_results = deserializeIntoObject :: processed_results
-      }
-      processed_results
-    }
   }
 
   /** Protected method to extract records using supplied result set and associated column set.

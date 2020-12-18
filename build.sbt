@@ -1,5 +1,5 @@
 name := "rogu"
-version := "0.1"
+version := "0.3"
 organization := "net.chekuri"
 developers := List(
   Developer(

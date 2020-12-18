@@ -6,11 +6,11 @@ import java.sql.{Connection, DriverManager}
 import java.util.Properties
 
 object MySqlDatabaseConnector extends RoguLogger {
-  private val host: String = "localhost"
-  private val port: Int = 3306
-  private val database: String = "employees"
+  private val host: String = "mysql-rfam-public.ebi.ac.uk"
+  private val port: Int = 4497
+  private val database: String = "Rfam"
   val driver: String = "com.mysql.jdbc.Driver"
-  private val username: String = "root"
+  private val username: String = "rfamro"
 
   def generateConnection: Connection = {
     try {
