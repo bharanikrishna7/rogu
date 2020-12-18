@@ -2,6 +2,7 @@ package net.chekuri.rogu.jdbc
 
 import net.chekuri.rogu.helpers.RoguTestModels.{
   Author,
+  Clan,
   Departments,
   Employees,
   FamilyAuthor,
@@ -111,7 +112,7 @@ class RoguDatabaseConnectorSpec extends AnyFlatSpec with RoguParser with RoguLog
     assert(true)
   }
 
-  "executeQuery" should "successfully execute query on a database and return parsed | object serialized results when some fields include timestamp" in {
+  "executeQuery" should "successfully execute query on a database and return parsed | object serialized results when some fields include date" in {
     val query = "SELECT * FROM version LIMIT 5;"
     val connection = MySqlDatabaseConnector.generateConnection
     val connector =
@@ -124,6 +125,23 @@ class RoguDatabaseConnectorSpec extends AnyFlatSpec with RoguParser with RoguLog
     logger.info(s"Total Time taken to execute query: ${result.total_nanos} nanoseconds.")
     logger.info(s"Retrieved Records:")
     logger.info(ObjectToJson[List[Version]](result.result))
+    connection.close()
+    assert(true)
+  }
+
+  "executeQuery" should "successfully execute query on a database and return parsed | object serialized results when some fields include timestamp" in {
+    val query = "SELECT * FROM clan LIMIT 5;"
+    val connection = MySqlDatabaseConnector.generateConnection
+    val connector =
+      new RoguDatabaseConnector(connection = connection, driver = MySqlDatabaseConnector.driver, id = getThreadId())
+    val result = connector.executeQuery[Clan](query = query)
+    logger.info("Successfully executed query and parsed results using Roogu Database Connector.")
+    logger.info(s"Time taken to compile query: ${result.compile_nanos} nanoseconds.")
+    logger.info(s"Time taken to execute query and fetch results: ${result.fetch_nanos} nanoseconds.")
+    logger.info(s"Time taken to process query results: ${result.process_nanos} nanoseconds.")
+    logger.info(s"Total Time taken to execute query: ${result.total_nanos} nanoseconds.")
+    logger.info(s"Retrieved Records:")
+    logger.info(ObjectToJson[List[Clan]](result.result, pretty = true))
     connection.close()
     assert(true)
   }

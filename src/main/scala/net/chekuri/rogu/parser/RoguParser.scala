@@ -5,6 +5,7 @@ import org.json4s.JsonAST.{JInt, JString}
 import org.json4s.{CustomSerializer, DefaultFormats, Formats, JBool, JNull}
 
 import java.sql.{Date, Timestamp}
+import java.text.SimpleDateFormat
 
 /** Interface which provides methods
   * to serialize and deserialize between
@@ -89,7 +90,12 @@ trait RoguParser extends RoguThreads with RoguLogger {
     extends CustomSerializer[java.sql.Timestamp](format =>
       (
         {
-          case JString(s) => Timestamp.valueOf(s)
+          case JString(value) => {
+            val pattern: String = "yyyy-MM-dd hh:mm:ss.SSS"
+            val df = new SimpleDateFormat(pattern.substring(0, value.length))
+            val date = df.parse(value)
+            new Timestamp(date.getTime)
+          }
           case JNull => null
         },
         { case d: Timestamp =>
