@@ -7,7 +7,7 @@ jobs:
   build:
     docker:
       # specify the version you desire here
-      - image: bharanikrishna7/sbt_mysql_employees:0.1
+      - image: mozilla/sbt:8u232_1.3.13
 
       # Specify service dependencies here if necessary
       # CircleCI maintains a library of pre-built images
@@ -18,7 +18,7 @@ jobs:
 
     environment:
       # Customize the JVM maximum heap limit
-      SBT_VERSION: 1.4.
+      SBT_VERSION: 1.4.5
       JVM_OPTS: -Xms256m -Xmx1024m
       CODECOV_TOKEN: "ed1ee818-dfcc-46d2-9c86-a1a58b8c7a57"
 
