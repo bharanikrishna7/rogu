@@ -1,5 +1,5 @@
 name := "rogu"
-version := "0.3"
+version := "0.4"
 organization := "net.chekuri"
 developers := List(
   Developer(
@@ -21,6 +21,8 @@ lazy val root = (project in file("."))
     libraryDependencies ++= Seq(scalactic_library, scalatest_library),
     /* mysql library dependency for unit tests */
     libraryDependencies ++= Seq(mysql_connector_library),
+    /* hikaricp library dependency for unit tests */
+    libraryDependencies ++= Seq(hikari_cp_library),
     // set code reformat on compile to true
     scalafmtOnCompile := true
   )
@@ -31,6 +33,7 @@ val mysql_version: String = "8.0.22"
 val scala_logging_version: String = "3.9.2"
 val scalatest_version: String = "3.2.3"
 val logback_version: String = "1.3.0-alpha5"
+val hikari_cp_version: String = "3.4.5"
 
 // library modules
 val json4s_native_library: ModuleID = "org.json4s" %% "json4s-native" % json4s_version
@@ -39,3 +42,4 @@ val scalactic_library: ModuleID = "org.scalactic" %% "scalactic" % scalatest_ver
 val scalatest_library: ModuleID = "org.scalatest" %% "scalatest" % scalatest_version % "test"
 val logback_classic_library: ModuleID = "ch.qos.logback" % "logback-classic" % logback_version % Test
 val mysql_connector_library: ModuleID = "mysql" % "mysql-connector-java" % mysql_version % Test
+val hikari_cp_library: ModuleID = "com.zaxxer" % "HikariCP" % hikari_cp_version % Test

@@ -39,7 +39,24 @@ class RoguDatabaseConnectorSpec extends AnyFlatSpec with RoguParser with RoguLog
     logger.info(s"Total Time taken to execute query: ${result.total_nanos} nanoseconds.")
     connection.close()
     assert(true)
+  }
 
+  "execute" should "successfully execute query on a database and return results through connection pool" in {
+    val query = "SELECT * FROM author LIMIT 5;"
+    val connection_pool = MySqlDatabaseConnector.generateConnectionPool
+    val connector =
+      new RoguDatabaseConnector(
+        connection = connection_pool.getConnection,
+        driver = MySqlDatabaseConnector.driver,
+        id = getThreadId())
+    val result = connector.execute(query = query, isUpdate = false)
+    logger.info("Successfully executed query using Roogu Database Connector.")
+    logger.info(s"Time taken to compile query: ${result.compile_nanos} nanoseconds.")
+    logger.info(s"Time taken to execute query and fetch results: ${result.fetch_nanos} nanoseconds.")
+    logger.info(s"Time taken to process query results: ${result.process_nanos} nanoseconds.")
+    logger.info(s"Total Time taken to execute query: ${result.total_nanos} nanoseconds.")
+    connection_pool.close()
+    assert(true)
   }
 
   "execute" should "throw exception when query is incorrect" in {
@@ -57,7 +74,26 @@ class RoguDatabaseConnectorSpec extends AnyFlatSpec with RoguParser with RoguLog
           throw ex
       }
     })
+  }
 
+  "execute" should "throw exception when query is incorrect through connection pool" in {
+    val query = "SELECT * FROM authors LIMIT 5;"
+    val connection_pool = MySqlDatabaseConnector.generateConnectionPool
+    val connector =
+      new RoguDatabaseConnector(
+        connection = connection_pool.getConnection,
+        driver = MySqlDatabaseConnector.driver,
+        id = getThreadId())
+    assertThrows[SQLSyntaxErrorException]({
+      try {
+        connector.execute(query = query, isUpdate = false)
+      } catch {
+        case ex: Exception =>
+          connection_pool.close()
+          logger.error(s"Actual Exception Message: ${ex.getMessage}")
+          throw ex
+      }
+    })
   }
 
   "executeQuery" should "throw exception when query is incorrect" in {
@@ -75,7 +111,26 @@ class RoguDatabaseConnectorSpec extends AnyFlatSpec with RoguParser with RoguLog
           throw ex
       }
     })
+  }
 
+  "executeQuery" should "throw exception when query is incorrect through connection pool" in {
+    val query = "select * from department;"
+    val connection_pool = MySqlDatabaseConnector.generateConnectionPool
+    val connector =
+      new RoguDatabaseConnector(
+        connection = connection_pool.getConnection,
+        driver = MySqlDatabaseConnector.driver,
+        id = getThreadId())
+    assertThrows[SQLSyntaxErrorException]({
+      try {
+        connector.executeQuery[Departments](query = query)
+      } catch {
+        case ex: Exception =>
+          connection_pool.close()
+          logger.error(s"Actual Exception Message: ${ex.getMessage}")
+          throw ex
+      }
+    })
   }
 
   "executeQuery" should "throw exception when query is correct but supplied case class is incorrect" in {
@@ -89,6 +144,26 @@ class RoguDatabaseConnectorSpec extends AnyFlatSpec with RoguParser with RoguLog
       } catch {
         case ex: Exception =>
           connection.close()
+          logger.error(s"Actual Exception Message: ${ex.getMessage}")
+          throw ex
+      }
+    })
+  }
+
+  "executeQuery" should "throw exception when query is correct but supplied case class is incorrect through connection pool" in {
+    val query = "SELECT * FROM author LIMIT 5;"
+    val connection_pool = MySqlDatabaseConnector.generateConnectionPool
+    val connector =
+      new RoguDatabaseConnector(
+        connection = connection_pool.getConnection,
+        driver = MySqlDatabaseConnector.driver,
+        id = getThreadId())
+    assertThrows[MappingException]({
+      try {
+        connector.executeQuery[Employees](query = query)
+      } catch {
+        case ex: Exception =>
+          connection_pool.close()
           logger.error(s"Actual Exception Message: ${ex.getMessage}")
           throw ex
       }
@@ -109,6 +184,26 @@ class RoguDatabaseConnectorSpec extends AnyFlatSpec with RoguParser with RoguLog
     logger.info(s"Retrieved Records:")
     logger.info(ObjectToJson[List[Author]](result.result, true))
     connection.close()
+    assert(true)
+  }
+
+  "executeQuery" should "successfully execute query on a database and return parsed | object serialized results through connection pool" in {
+    val query = "SELECT * FROM author LIMIT 5;"
+    val connection_pool = MySqlDatabaseConnector.generateConnectionPool
+    val connector =
+      new RoguDatabaseConnector(
+        connection = connection_pool.getConnection,
+        driver = MySqlDatabaseConnector.driver,
+        id = getThreadId())
+    val result = connector.executeQuery[Author](query = query)
+    logger.info("Successfully executed query and parsed results using Roogu Database Connector.")
+    logger.info(s"Time taken to compile query: ${result.compile_nanos} nanoseconds.")
+    logger.info(s"Time taken to execute query and fetch results: ${result.fetch_nanos} nanoseconds.")
+    logger.info(s"Time taken to process query results: ${result.process_nanos} nanoseconds.")
+    logger.info(s"Total Time taken to execute query: ${result.total_nanos} nanoseconds.")
+    logger.info(s"Retrieved Records:")
+    logger.info(ObjectToJson[List[Author]](result.result, true))
+    connection_pool.close()
     assert(true)
   }
 
@@ -180,6 +275,26 @@ class RoguDatabaseConnectorSpec extends AnyFlatSpec with RoguParser with RoguLog
     assert(true)
   }
 
+  "executeQuery" should "successfully execute query on a database and return parsed | object serialized results as int when case class demands result as int instead of boolean through connection pool" in {
+    val query = "SELECT * FROM family_author WHERE desc_order IN (0, 1) LIMIT 10;"
+    val connection_pool = MySqlDatabaseConnector.generateConnectionPool
+    val connector =
+      new RoguDatabaseConnector(
+        connection = connection_pool.getConnection,
+        driver = MySqlDatabaseConnector.driver,
+        id = getThreadId())
+    val result = connector.executeQuery[FamilyAuthor](query = query)
+    logger.info("Successfully executed query and parsed results using Roogu Database Connector.")
+    logger.info(s"Time taken to compile query: ${result.compile_nanos} nanoseconds.")
+    logger.info(s"Time taken to execute query and fetch results: ${result.fetch_nanos} nanoseconds.")
+    logger.info(s"Time taken to process query results: ${result.process_nanos} nanoseconds.")
+    logger.info(s"Total Time taken to execute query: ${result.total_nanos} nanoseconds.")
+    logger.info(s"Retrieved Records:")
+    logger.info(ObjectToJson[List[FamilyAuthor]](result.result))
+    connection_pool.close()
+    assert(true)
+  }
+
   "execute" should "correctly execute valid update type query" in {
     val query = "SET time_zone = '-8:00';"
     val connection = MySqlDatabaseConnector.generateConnection
@@ -197,6 +312,26 @@ class RoguDatabaseConnectorSpec extends AnyFlatSpec with RoguParser with RoguLog
     assert(BigInt.apply(1) == result.records.size)
   }
 
+  "execute" should "correctly execute valid update type query through connection pool" in {
+    val query = "SET time_zone = '-8:00';"
+    val connection_pool = MySqlDatabaseConnector.generateConnectionPool
+    val connector =
+      new RoguDatabaseConnector(
+        connection = connection_pool.getConnection,
+        driver = MySqlDatabaseConnector.driver,
+        id = getThreadId())
+    val result = connector.execute(query, isUpdate = true)
+    logger.info("Successfully executed query and parsed results using Roogu Database Connector.")
+    logger.info(s"Time taken to compile query: ${result.compile_nanos} nanoseconds.")
+    logger.info(s"Time taken to execute query and fetch results: ${result.fetch_nanos} nanoseconds.")
+    logger.info(s"Time taken to process query results: ${result.process_nanos} nanoseconds.")
+    logger.info(s"Total Time taken to execute query: ${result.total_nanos} nanoseconds.")
+    logger.info(s"Return Value : ${result.records.values.last.toString.toInt}")
+    connection_pool.close()
+    assert("effected_records | executed_operation_result" == result.columns.last.name)
+    assert(BigInt.apply(1) == result.records.size)
+  }
+
   "execute" should "correctly throw exception when supplied query is incorrect" in {
     val query = "SET time_zone = '-80000:0000000';"
     val connection = MySqlDatabaseConnector.generateConnection
@@ -209,6 +344,27 @@ class RoguDatabaseConnectorSpec extends AnyFlatSpec with RoguParser with RoguLog
       } catch {
         case ex: Exception =>
           connection.close()
+          logger.error(s"Actual Exception Message: ${ex.getMessage}")
+          throw ex
+      }
+    })
+  }
+
+  "execute" should "correctly throw exception when supplied query is incorrect through connection pool" in {
+    val query = "SET time_zone = '-80000:0000000';"
+    val connection_pool = MySqlDatabaseConnector.generateConnectionPool
+    val connector =
+      new RoguDatabaseConnector(
+        connection = connection_pool.getConnection,
+        driver = MySqlDatabaseConnector.driver,
+        id = getThreadId())
+
+    assertThrows[java.sql.SQLException]({
+      try {
+        connector.execute(query, isUpdate = true)
+      } catch {
+        case ex: Exception =>
+          connection_pool.close()
           logger.error(s"Actual Exception Message: ${ex.getMessage}")
           throw ex
       }
